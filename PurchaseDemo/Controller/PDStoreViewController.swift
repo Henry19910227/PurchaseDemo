@@ -11,7 +11,7 @@ import StoreKit
 class PDStoreViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     lazy var request: SKProductsRequest = {
-        return SKProductsRequest(productIdentifiers: ["com.henry.Purchase.coin"])
+        return SKProductsRequest(productIdentifiers: ["com.henry.PurchaseDemo.coin"])
     }()
     var products: [PDProduct] = []
 }
@@ -77,27 +77,4 @@ extension PDStoreViewController: SKProductsRequestDelegate {
     }
 }
 
-//MARK: - SKPaymentTransactionObserver
-extension PDStoreViewController: SKPaymentTransactionObserver {
-    func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
-        for transaction in transactions {
-             switch transaction.transactionState {
-                  // Call the appropriate custom method for the transaction state.
-             case .purchasing:
-                print("purchasing...")
-             case .deferred:
-                print("deferred")
-             case .failed:
-                print("failed")
-             case .purchased:
-                print("purchased")
-             case .restored:
-                print("restored")
-             @unknown default: print("Unexpected transaction state \(transaction.transactionState)")
-            }
-        }
-    }
-    
-    
-}
 
