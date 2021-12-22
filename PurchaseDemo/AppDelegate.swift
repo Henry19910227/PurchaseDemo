@@ -45,6 +45,20 @@ class AppDelegate: UIResponder, UIApplicationDelegate, SKPaymentTransactionObser
              case .purchased:
                 print("purchased")
                 SKPaymentQueue.default().finishTransaction(transaction)
+                 
+                 if let appStoreReceiptURL = Bundle.main.appStoreReceiptURL,
+                     FileManager.default.fileExists(atPath: appStoreReceiptURL.path) {
+
+                     do {
+                         let receiptData = try Data(contentsOf: appStoreReceiptURL, options: .alwaysMapped)
+                         print(receiptData)
+
+                         let receiptString = receiptData.base64EncodedString(options: [])
+
+                         print(receiptString)
+                     }
+                     catch { print("Couldn't read receipt data with error: " + error.localizedDescription) }
+                 }
              case .restored:
                 print("restored")
              @unknown default: print("Unexpected transaction state \(transaction.transactionState)")
