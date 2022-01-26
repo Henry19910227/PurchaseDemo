@@ -11,7 +11,7 @@ import StoreKit
 class PDStoreViewController: UIViewController {
     @IBOutlet weak var tableView: UITableView!
     lazy var request: SKProductsRequest = {
-        return SKProductsRequest(productIdentifiers: ["com.henry.PurchaseDemo.CopperLevelCourse", "com.henry.PurchaseDemo.SilverLevelCourse", "com.henry.PurchaseDemo.MonthTest1", "com.henry.PurchaseDemo.YearTest1"])
+        return SKProductsRequest(productIdentifiers: ["com.fitness.copper_course", "com.fitness.silver_course", "com.fitness.gold_course", "com.fitness.gold_member_month", "com.fitness.gold_member_year"])
     }()
     var products: [PDProduct] = []
 }
