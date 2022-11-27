@@ -7,12 +7,28 @@
 
 import UIKit
 import StoreKit
+import FirebaseCore
+import FirebaseMessaging
 
 @main
-class AppDelegate: UIResponder, UIApplicationDelegate, SKPaymentTransactionObserver {
+class AppDelegate: UIResponder, UIApplicationDelegate, SKPaymentTransactionObserver, UNUserNotificationCenterDelegate, MessagingDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        // 配置iap
         SKPaymentQueue.default().add(self)
+        // 配置apn
+        UNUserNotificationCenter.current().delegate = self
+        UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
+            if !granted {
+               print("用戶拒絕開啟提醒")
+               return
+            }
+            print("用戶同意開啟提醒")
+        }
+        application.registerForRemoteNotifications()
+        // 配置firebase
+        FirebaseApp.configure()
+        Messaging.messaging().delegate = self
         return true
     }
 
@@ -31,6 +47,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate, SKPaymentTransactionObser
     
     func applicationWillTerminate(_ application: UIApplication) {
         SKPaymentQueue.default().remove(self)
+    }
+    
+    func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
+        print(fcmToken ?? "")
     }
     
     func paymentQueue(_ queue: SKPaymentQueue, updatedTransactions transactions: [SKPaymentTransaction]) {
@@ -64,6 +84,19 @@ class AppDelegate: UIResponder, UIApplicationDelegate, SKPaymentTransactionObser
              @unknown default: print("Unexpected transaction state \(transaction.transactionState)")
             }
         }
+    }
+    
+    // 使用者點選推播時觸發
+    func userNotificationCenter(_ center: UNUserNotificationCenter, didReceive response: UNNotificationResponse, withCompletionHandler completionHandler: @escaping () -> Void) {
+        print(#function)
+        let content = response.notification.request.content
+        print(content.userInfo)
+        completionHandler()
+    }
+    
+    // 讓 App 在前景也能顯示推播
+    func userNotificationCenter(_ center: UNUserNotificationCenter, willPresent notification: UNNotification, withCompletionHandler completionHandler: @escaping (UNNotificationPresentationOptions) -> Void) {
+        completionHandler([.banner])
     }
 }
 
